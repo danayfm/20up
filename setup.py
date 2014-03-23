@@ -17,9 +17,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-Authors: Borja Menéndez Moreno <tuentiup@gmail.com>
+Authors: Borja Menéndez Moreno
 
-Program for the backup of Tuenti, a Spanish social network.
+Program for the backup of Spanish social networks.
 This program downloads all of the photos, comments, private messages and
 friends' information of a specific user.
 """
@@ -33,7 +33,7 @@ if 'py2exe' in sys.argv:
     kwargs = {
         'console' : [{
             'script'         : '20up.py',
-            'description'    : 'Programa para hacer un backup de tu Tuenti.'
+            'description'    : 'Programa para hacer un backup de tu red social favorita.'
             }],
         'zipfile' : None,
         'options' : { 'py2exe' : {
@@ -47,5 +47,4 @@ if 'py2exe' in sys.argv:
 setup(
     name='20up',
     author='@borjamonserrano',
-    author_email='tuentiup@gmail.com',
     **kwargs)

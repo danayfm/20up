@@ -17,27 +17,27 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-Authors: Borja Menéndez Moreno <tuentiup@gmail.com>
+Authors: Borja Menéndez Moreno
 
-Program for the backup of Tuenti, a Spanish social network.
+Program for the backup of Spanish social networks.
 This program downloads all of the photos, comments, private messages and
 friends' information of a specific user.
 """
 
 import urllib2, json
 
-class APtuentI:
+class APredsocial:
     """
-    The Tuenti API class, called APtuentI.
+    The API class.
     
-    This class is used for the communication between the program and Tuenti,
-    allowing the program to do what it wants to backup a Tuenti account.
+    This class is used for the communication between the program and the network,
+    allowing the program to do what it wants to backup an account.
     """
     
-    def __init__(self):
+    def __init__(self,netname):
         self.sid = ''
         self.apiversion = '0.7.1'
-        self.api = 'http://api.tuenti.com/api/'
+        self.api = 'http://api.'+netname+'.com/api/'
         
     def getResponse(self, data):
         """A method to retrieve a JSON response."""
@@ -50,7 +50,7 @@ class APtuentI:
         self.sid = SID
         
     def doLogin(self):
-        """Do the login in the Tuenti API server"""
+        """Do the login in the API server"""
         data = {'version':self.apiversion, 'requests':[['getChallenge', \
                 {'type':'login'}]]}
         return self.getResponse(data)

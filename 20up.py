@@ -17,9 +17,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-Authors: Borja Menéndez Moreno <tuentiup@gmail.com>
+Authors: Borja Menéndez Moreno
 
-Program for the backup of Tuenti, a Spanish social network.
+Program for the backup of Spanish social networks.
 This program downloads all of the photos, comments, private messages and
 friends' information of a specific user.
 """
@@ -28,17 +28,14 @@ import math, os, httplib, requests, string
 import re, getpass, urllib2, hashlib, unicodedata
 from time import sleep
 
-from APtuentI import APtuentI
+from APredsocial import APredsocial
 from MyHTMLParser import MyHTMLParser
 
 version = '1.1'
-web = 'http://bmenendez.github.io/20up'
-twitter = '@borjamonserrano'
-email = 'tuentiup@gmail.com'
 appkey = 'MDI3MDFmZjU4MGExNWM0YmEyYjA5MzRkODlmMjg0MTU6MC4xMzk0ODYwMCAxMjYxMDYwNjk2'
 
-statusText = 'Utilizando 20p para descargarme todas '
-statusText += 'mis fotos de Tuenti :) ' + web
+statusText = 'Utilizando 20up para descargarme todas '
+statusText += 'mis fotos :) '
 
 def printWelcome():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -47,12 +44,6 @@ def printWelcome():
     print '|'
     print '| Gracias por descargar esta aplicacion'
     print '| Espero que te sea de gran utilidad :)'
-    print '| Si tienes alguna duda, tienes toda la info en:'
-    print '|'
-    print '|           ' + web
-    print '|'
-    print '| Tambien puedes resolver tus dudas en twitter: ' + twitter
-    print '| Asi como por e-mail a traves de: ' + email
     print '-' * 60
     
 def printGoodBye():
@@ -68,7 +59,7 @@ def printGoodBye():
     print '| Tambien puedes resolver tus dudas en twitter: ' + twitter
     print '| Asi como por e-mail a traves de: ' + email
     print '|'
-    print '| Si quieres, puedo cambiar tu estado Tuenti para advertir que'
+    print '| Si quieres, puedo cambiar tu estado para advertir que'
     print '| has utilizado 20up y que tus contactos conozcan la aplicacion.'
     print '| El mensaje que se pondra sera: ' + statusText
     print '| 1 - Si'
@@ -112,21 +103,15 @@ def printHelp():
     print '-' * 60
     print '| 20up version ' + version
     print '|'
-    print '| 20up es una aplicacion para hacer un backup de tu Tuenti.'
+    print '| 20up es una aplicacion para hacer un backup de tu red social.'
     print '| 20up no se responsabiliza de los usos derivados que se le'
     print '| puedan dar a esta aplicacion.'
     print '| 20up tiene como proposito poder realizar un backup de tu'
-    print '| cuenta de usuario de Tuenti, de forma que tendras todas tus'
+    print '| cuenta de usuario, de forma que tendras todas tus'
     print '| fotos, mensajes privados, comentarios de tablon y datos de tus'
     print '| contactos en tu ordenador.'
     print '| 20up no almacena ni envia tu correo o contrasenya a terceras'
-    print '| personas o cuentas de Tuenti.'
-    print '| Por favor, si tienes alguna duda, visita la web:'
-    print '|'
-    print '|           ' + web
-    print '|'
-    print '| Tambien puedes resolver tus dudas en twitter: ' + twitter
-    print '| Asi como por e-mail a traves de: ' + email
+    print '| personas o cuentas.'
     print '-' * 60
     
 def getData(withError):
@@ -137,11 +122,11 @@ def getData(withError):
         print '| Por favor, escribe de nuevo...'
     else:
         print '| Para poder hacer el backup necesito un poco mas'
-        print '| de informacion sobre tu cuenta de Tuenti...'
+        print '| de informacion sobre tu cuenta...'
         print '|'
         print '| Esta informacion no se almacenara en ningun sitio'
         print '| ni se enviara a ningun lado, solamente se requiere'
-        print '| para la conexion con tu cuenta de Tuenti :)'
+        print '| para la conexion con tu cuenta :)'
     print
     email = raw_input('E-mail: ')
     while not re.match(r'[^@]+@[^@]+\.[^@]+', email):
@@ -151,13 +136,13 @@ def getData(withError):
     
     return email, password
     
-def backupTotal(myTuenti, email, password):
-    backupPrivateMessages(myTuenti, email, password)
-    backupComments(myTuenti)
-    backupUsers(myTuenti)
-    backupPhotos(myTuenti)
+def backupTotal(net_name, mySocialNetwork, email, password):
+    backupPrivateMessages(net_name, mySocialNetwork, email, password)
+    backupComments(mySocialNetwork)
+    backupUsers(mySocialNetwork)
+    backupPhotos(mySocialNetwork)
     
-def backupPhotos(myTuenti):
+def backupPhotos(mySocialNetwork):
     printStarting('fotos')
     
     print '| Obteniendo los nombres de tus albumes...'
@@ -165,7 +150,7 @@ def backupPhotos(myTuenti):
     i = 0
     totalPhotos = 0
     while True:
-        albums = myTuenti.getUserAlbums(i)
+        albums = mySocialNetwork.getUserAlbums(i)
         counter = 0
         for album in albums[0]:
             counter += 1
@@ -216,7 +201,7 @@ def backupPhotos(myTuenti):
         
         partialCounter = 0
         for i in range(0, iters):
-            mf = myTuenti.getAlbumPhotos(album, i)
+            mf = mySocialNetwork.getAlbumPhotos(album, i)
             for elem in mf[0]['album']:
                 url = elem['photo_url_600']
                 title = unicodedata.normalize('NFKD', elem['title']) 
@@ -247,12 +232,12 @@ def backupPhotos(myTuenti):
         
     os.chdir(rootPath)
     
-def backupPrivateMessages(myTuenti, email, password):
+def backupPrivateMessages(net_name, mySocialNetwork, email, password):
     printStarting('mensajes privados')
     
     print '| Obteniendo identificadores de tus mensajes privados'
     print '| (esto llevara algun tiempo)'
-    messages = myTuenti.getInbox(0)
+    messages = mySocialNetwork.getInbox(0)
     totalMessages = int(messages[0]['num_threads'])
     keys = []
     
@@ -263,20 +248,20 @@ def backupPrivateMessages(myTuenti, email, password):
     iters = int(iters)
     
     for i in range(0, iters):
-        messages = myTuenti.getInbox(i)
+        messages = mySocialNetwork.getInbox(i)
         for message in messages[0]['threads']:
             keys.append(message['key'])
         
         sleep(0.5)
     
     s = requests.Session()
-    r = s.get('https://m.tuenti.com/?m=Login', verify=False)
+    r = s.get('https://m.'+net_name+'.com/?m=Login', verify=False)
     csrf = re.findall('name="csrf" value="(.*?)"', r.text)[0]
 
-    data = { 'csrf': csrf, 'tuentiemailaddress': email, 'password': password, 'remember': 1 }
-    s.post('https://m.tuenti.com/?m=Login&f=process_login', data)
+    data = { 'csrf': csrf, net_name+'emailaddress': email, 'password': password, 'remember': 1 }
+    s.post('https://m.'+net_name+'.com/?m=Login&f=process_login', data)
     
-    r = s.get("https://m.tuenti.com/?m=Profile&func=my_profile", verify=False)
+    r = s.get("https://m."+net_name+".com/?m=Profile&func=my_profile", verify=False)
     if r.text.find('email') != -1:
         print '| E-mail o password incorrectos'
         raw_input('| Pulsa ENTER para continuar')
@@ -297,7 +282,7 @@ def backupPrivateMessages(myTuenti, email, password):
         percent = 100 * counter / totalMessages
         print '| [' + str(percent) + '%] Descargando mensaje ' + \
               str(counter) + ' de ' + str(totalMessages) + '...'
-        urlName = 'https://m.tuenti.com/?m=messaging&func=view_thread&thread_id='
+        urlName = 'https://m.'+net_name+'.com/?m=messaging&func=view_thread&thread_id='
         urlName += key + '&box=inbox&view_full=1'
         
         r = s.get(urlName, verify=False)
@@ -309,7 +294,7 @@ def backupPrivateMessages(myTuenti, email, password):
         
     os.chdir(rootPath)
     
-def backupComments(myTuenti):
+def backupComments(mySocialNetwork):
     printStarting('comentarios')
     
     i = 0
@@ -317,7 +302,7 @@ def backupComments(myTuenti):
     totalCount = 0
     fileToWrite = open('comentarios.txt', 'w')
     while True:
-        mes = myTuenti.getWall(i)
+        mes = mySocialNetwork.getWall(i)
         counter = 0
         try:
             for post in mes[0]['posts']:
@@ -354,11 +339,11 @@ def backupComments(myTuenti):
     
     fileToWrite.close()
     
-def backupUsers(myTuenti):
+def backupUsers(mySocialNetwork):
     printStarting('usuarios')
     
     print '| Obteniendo todos tus contactos'
-    totalFriends = myTuenti.getFriendsData()
+    totalFriends = mySocialNetwork.getFriendsData()
     
     fileToWrite = open('usuarios.txt', 'w')
     text = ''
@@ -370,7 +355,7 @@ def backupUsers(myTuenti):
         print '| Obteniendo datos de ' + name + ' ' + surname + '...'
         friendId = friend['id']
         
-        data = myTuenti.getUsersData(friendId)
+        data = mySocialNetwork.getUsersData(friendId)
         if data[0]['users'][0]['birthday']:
             text += ' (' + data[0]['users'][0]['birthday'] + ')'
         if data[0]['users'][0]['phone_number']:
@@ -383,17 +368,17 @@ def backupUsers(myTuenti):
     fileToWrite.write(text.encode('utf-8'))
     fileToWrite.close()
 
-def main():
+def main(net_name):
     email, password = getData(False)
-    myTuenti = APtuentI()
+    mySocialNetwork = APredsocial(net_name)
     while True:
         try:
-            login = myTuenti.doLogin()
+            login = mySocialNetwork.doLogin()
             passcode = hashlib.md5(login[0]['challenge'] + \
                             hashlib.md5(password).hexdigest()).hexdigest()
-            out = myTuenti.getSession(login[0]['timestamp'], \
+            out = mySocialNetwork.getSession(login[0]['timestamp'], \
                                 login[0]['seed'], passcode, appkey, email)
-            myTuenti.setSessionID(out[0]['session_id'])
+            mySocialNetwork.setSessionID(out[0]['session_id'])
             break
         except:
             email, password = getData(True)
@@ -404,19 +389,19 @@ def main():
         respuesta = raw_input('> ')
         
         if respuesta == '1':
-            backupTotal(myTuenti, email, password)
+            backupTotal(net_name, mySocialNetwork, email, password)
             printEnding('todo')
         elif respuesta == '2':
-            backupPhotos(myTuenti)
+            backupPhotos(mySocialNetwork)
             printEnding('fotos')
         elif respuesta == '3':
-            backupPrivateMessages(myTuenti, email, password)
+            backupPrivateMessages(mySocialNetwork, email, password)
             printEnding('mensajes privados')
         elif respuesta == '4':
-            backupComments(myTuenti)
+            backupComments(mySocialNetwork)
             printEnding('comentarios')
         elif respuesta == '5':
-            backupUsers(myTuenti)
+            backupUsers(mySocialNetwork)
             printEnding('usuarios')
         elif respuesta == '6':
             printHelp()
@@ -429,16 +414,16 @@ def main():
     printGoodBye()
     respuesta = raw_input('> ')
     if respuesta == '1':
-        myTuenti.setUserStatus(statusText)
+        mySocialNetwork.setUserStatus(statusText)
         
     print '| Hasta pronto :)'
 
 if __name__ == '__main__':
     printWelcome()
-    raw_input('| Pulsa ENTER para continuar')
+    net_name = raw_input('| Escribe el nombre, en minusculas, de la red social que quieras usar y pulsa ENTER para continuar.\n')
     while True:
         try:
-            main()
+            main(net_name)
             break
         except urllib2.URLError:
             print '|'
