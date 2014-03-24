@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (C) 2013 Borja Menendez Moreno
+Copyright (C) 2013 
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,8 +16,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-Authors: Borja Menéndez Moreno
 
 Program for the backup of Spanish social networks.
 This program downloads all of the photos, comments, private messages and
